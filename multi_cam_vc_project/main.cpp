@@ -151,7 +151,7 @@ int main()
 	//	Loop for acquisition and display the result on the viewer
 	while (!viewer->wasStopped()) {
 
-		//	get frame set from first sensor
+		//	Get frame set from first sensor
 		frameset = pipeline[0].wait_for_frames();
 
 		//	Calculate the point cloud
@@ -159,7 +159,7 @@ int main()
 		points = pc.calculate(depth_frame);
 		auto pcl_points_cam1 = points_to_pcl(points);
 
-		//	get color data
+		//	Get color data
 		rs2::align align(RS2_STREAM_DEPTH);
 		aligned_frames = align.process(frameset);
 		rs2::video_frame color_frame = aligned_frames.get_color_frame();
@@ -167,7 +167,7 @@ int main()
 		uint32_t color_width = color_frame.as<rs2::video_frame>().get_width();
 		uint32_t color_height = color_frame.as<rs2::video_frame>().get_height();
 
-		//	Fill the PLC
+		//	Fill the Point Clouds
 		int j = 0;
 		for (int i = 0; i < color_width * color_height; i++) {
 			cloud_cam1->points[i].x = pcl_points_cam1->points[i].x;
@@ -179,7 +179,7 @@ int main()
 			j = j + 3;
 		}
 
-		//rotate around x
+		//Rotate around x
 		angle =  dangle/2;
 		sin_ang = sin(angle);
 		cos_ang = cos(angle);
@@ -196,7 +196,7 @@ int main()
 		}
 
 
-		//	get frame set from second sensor
+		//	Get frame set from second sensor
 		frameset = pipeline[1].wait_for_frames();
 
 		//	Calculate the point cloud
@@ -204,14 +204,14 @@ int main()
 		points = pc.calculate(depth_frame);
 		auto pcl_points_cam2 = points_to_pcl(points);
 
-		//	get color data
+		//	Get color data
 		aligned_frames = align.process(frameset);
 		color_frame = aligned_frames.get_color_frame();
 		p_color_frame = static_cast<uint8_t*>(const_cast<void*>(color_frame.get_data()));
 		color_width = color_frame.as<rs2::video_frame>().get_width();
 		color_height = color_frame.as<rs2::video_frame>().get_height();
 
-		//	Fill the PLC
+		//	Fill the Point Clouds
 		j = 0;
 		for (int i = 0; i < color_width * color_height; i++) {
 			cloud_cam2->points[i].x = pcl_points_cam2->points[i].x;
@@ -223,7 +223,7 @@ int main()
 			j = j + 3;
 		}
 
-		//rotate around x
+		//Rotate around x
 		angle = - dangle/2;
 		sin_ang = sin(angle);
 		cos_ang = cos(angle);
@@ -239,7 +239,7 @@ int main()
 			cloud_cam2->points[i].z = rot_point_z;
 		}
 
-		//	Display the result on the viewer
+		//	Display the result on the PCL viewer
 		if (!viewer->updatePointCloud(cloud_cam1, "cloud1")) {
 			viewer->addPointCloud(cloud_cam1, "cloud1");
 			viewer->addPointCloud(cloud_cam2, "cloud2");
